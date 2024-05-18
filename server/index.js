@@ -6,6 +6,7 @@ import checkForAuthenticationCookie from "./middlewares/authentication.js";
 import cookieParser from "cookie-parser";
 import path from "path";
 import userRouter from "./routes/user.js";
+import dataRouter from "./routes/dataOps.js";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/auth", userRouter);
+app.use("/user", dataRouter);
 
 // Start the server
 app.listen(port);

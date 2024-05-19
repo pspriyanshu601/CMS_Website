@@ -1,5 +1,5 @@
 // src/pages/SchemaContents.js
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -10,8 +10,9 @@ const SchemaContents = () => {
   const [data, setData] = useState([]);
   const [schema, setSchema] = useState(null);
   const [newData, setNewData] = useState({});
+  const [errors, setErrors] = useState({});
   const [selectedData, setSelectedData] = useState(null); // State for selected data
-  const userId = "6644ceceaacf70ef12faab4f"; // Replace with actual user ID from auth
+  const userId = localStorage.getItem("userId"); // Replace with actual user ID from auth
 
   useEffect(() => {
     const fetchSchemaData = async () => {
@@ -102,59 +103,79 @@ const SchemaContents = () => {
       toast.error("Failed to add/update data. Please try again later.");
     }
   };
+  
+ const handleAddDataClick = () => {
+   const newErrors = {};
+   schema.fields.forEach((field) => {
+     if (
+       !newData[field.columnName] ||
+       (field.dataType === "string" && newData[field.columnName].trim() === "")
+     ) {
+       newErrors[field.columnName] = "This field is required";
+     } else if (
+       field.dataType === "number" &&
+       isNaN(newData[field.columnName])
+     ) {
+       newErrors[field.columnName] = "Value must be a number";
+     }
+   });
 
+   if (Object.keys(newErrors).length === 0) {
+     handleAddData(newData);
+     setNewData({});
+   } else {
+     setErrors(newErrors);
+   }
+ };
   const handleUpdate = (item) => {
     setNewData(item.data);
     setSelectedData(item);
   };
 
-const [error, setError] = useState(""); // State variable to store error message
+// const [error, setError] = useState(""); // State variable to store error message
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  // Get the data type of the current field from the schema
-  const fieldType = schema.fields.find(
-    (field) => field.columnName === name
-  ).dataType;
+    // Get the data type of the current field from the schema
+    const field = schema.fields.find((field) => field.columnName === name);
+    const fieldType = field ? field.dataType : null;
 
-  // Perform validation based on the data type
-  let isValid = true;
+    // Perform validation based on the data type
+    let isValid = true;
+    let errorMessage = "";
 
-  switch (fieldType) {
-    case "string":
-      if (typeof value !== "string") {
-        isValid = false;
-        setError("Value must be a string.");
-      } else {
-        setError(""); // Clear the error message if validation passes
-      }
-      break;
-    case "number":
-      if (isNaN(value) || value === "") {
-        isValid = false;
-        setError("Value must be a number.");
-      } else {
-        setError(""); // Clear the error message if validation passes
-      }
-      break;
-    // Add validation for other data types as needed
-    default:
-      setError(""); // Clear the error message for unsupported data types
-      break;
-  }
+    switch (fieldType) {
+      case "string":
+        if (typeof value !== "string" || value.trim() === "") {
+          isValid = false;
+          errorMessage = "Value must be a non-empty string.";
+        }
+        break;
+      case "number":
+        if (isNaN(value) || value === "") {
+          isValid = false;
+          errorMessage = "Value must be a number.";
+        }
+        break;
+      // Add validation for other data types as needed
+      default:
+        errorMessage = ""; // Clear the error message for unsupported data types
+        break;
+    }
 
-  // Update the state only if the value is valid
-  if (isValid) {
-    setNewData({ ...newData, [name]: value });
-    // Remove the shake effect class if validation passes
-    e.target.classList.remove("shake");
-  } else {
-    // Add the shake effect class if validation fails
-    e.target.classList.add("shake");
-    // You can display the error message to the user using a toast or another UI component
-  }
-};
+    setNewData({
+      ...newData,
+      [name]: value,
+    });
+
+    setErrors({
+      ...errors,
+      [name]: isValid ? "" : errorMessage,
+    });
+  };
+
+
 
 
   if (!schema) {
@@ -239,10 +260,15 @@ const handleChange = (e) => {
                   onChange={handleChange}
                   className="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex-grow"
                 />
+                {errors[field.columnName] && (
+                  <p className="text-red-500 ml-2">
+                    {errors[field.columnName]}
+                  </p>
+                )}
               </div>
             ))}
             <button
-              onClick={handleAddData}
+              onClick={handleAddDataClick}
               className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
             >
               {selectedData ? "Update Data" : "Add Data"}

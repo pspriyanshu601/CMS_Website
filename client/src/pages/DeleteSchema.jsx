@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 
 const DeleteSchema = () => {
   const [schemas, setSchemas] = useState([]);
-  const userId = "6644ceceaacf70ef12faab4f"; // Replace with actual user ID from auth
+  const userId = localStorage.getItem("userId"); // Replace with actual user ID from auth
 
   useEffect(() => {
     const fetchSchemas = async () => {

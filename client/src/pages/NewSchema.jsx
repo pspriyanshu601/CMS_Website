@@ -80,7 +80,7 @@ function NewSchema() {
      const stringifiedFields = JSON.stringify(fields);
 
     const data = {
-      userId: "6644ceceaacf70ef12faab4f", // Replace with actual user ID from auth
+      userId: localStorage.getItem("userId"), // Replace with actual user ID from auth
       tableName,
       fields: stringifiedFields,
     };

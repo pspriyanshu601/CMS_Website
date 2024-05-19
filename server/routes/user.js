@@ -22,11 +22,12 @@ userRouter.post("/signup", async (req, res) => {
       });
     }
 
-    await User.create({
+    const response = await User.create({
       fullName,
       email,
       password,
     });
+    console.log(response);
     return res.status(200).json({
       success: true,
       message: "User Created successfully",
@@ -44,7 +45,7 @@ userRouter.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
     const token = await User.matchPassword(email, password);
-    const user = User.findOne({ email: email });
+    const user = await User.findOne({ email: email });
 
     return res.cookie("token", token).status(200).json({
       success: true,
@@ -52,6 +53,7 @@ userRouter.post("/signin", async (req, res) => {
       username: user.fullName,
       path: "home",
       token,
+      userId:user._id.toString()
     });
   } catch (error) {
     console.log(error);

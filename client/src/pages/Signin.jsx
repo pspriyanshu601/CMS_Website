@@ -69,6 +69,7 @@ export default function SignIn() {
       });
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userId);
         setUsername(response.data.username);
         toast.success(response.data.message);
       }

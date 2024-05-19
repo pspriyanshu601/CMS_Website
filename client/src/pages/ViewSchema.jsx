@@ -13,7 +13,7 @@ const ViewSchema = () => {
 const response = await axios.get(
   `${import.meta.env.VITE_SITE_LINK}/user/getUserSchema`,
   {
-    params: { userId: "6644ceceaacf70ef12faab4f" },
+    params: { userId: localStorage.getItem("userId") },
   }
 );
           console.log(response.data);

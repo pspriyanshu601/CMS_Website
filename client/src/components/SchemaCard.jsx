@@ -28,27 +28,25 @@ function SchemaCard({ data }) {
   return (
     <div
       className="bg-white shadow-xl rounded-lg p-6 mb-4 w-full max-w-md m-4 cursor-pointer"
+      // eslint-disable-next-line react/prop-types
       onClick={() => handleCardClick(data[0]._id)}
     >
       {data.map((schema) => (
-        <div key={schema._id} className="mb-4">
-          <h2 className="text-xl font-bold">{schema.tableName}</h2>
-          <div className="mt-2">
-            <h3 className="text-lg font-semibold">Fields:</h3>
-            <ul className="list-disc pl-6">
-              {schema.fields.map((field) => (
-                <li key={field._id}>
-                  <div className="flex items-center">
-                    <div className="mr-2">{getIcon(field.dataType)}</div>
-                    <div>
-                      <span className="font-medium text-gray-900">
-                        {field.columnName}
-                      </span>
-                      <span className="ml-1 text-sm text-gray-600">
-                        ({field.dataType})
-                      </span>
-                    </div>
-                  </div>
+        <div key={schema._id} className="mb-6">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 transition transform hover:scale-105 duration-300 ease-in-out hover:shadow-2xl">
+            <h2 className="text-2xl font-bold mb-4 text-blue-900 border-b-2 border-blue-300 pb-2">
+              {schema.tableName}
+            </h2>
+            <ul className="space-y-4">
+              {schema.fields.map((field, index) => (
+                <li
+                  key={index}
+                  className="flex justify-between items-center text-blue-900 bg-blue-200 p-3 rounded-lg shadow-inner"
+                >
+                  <span className="font-semibold">{field.columnName}</span>
+                  <span className="text-sm text-blue-700">
+                    {field.dataType}
+                  </span>
                 </li>
               ))}
             </ul>

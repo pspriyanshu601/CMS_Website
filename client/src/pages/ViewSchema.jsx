@@ -32,10 +32,11 @@ const response = await axios.get(
       <br />
       <br />
       <br />
-
-      <div className="container mx-auto p-4 ">
-        <h1 className="text-3xl font-bold mb-8 text-center">View Schemas</h1>
-        <div className="flex">
+      <div className="container mx-auto p-6 md:p-12 bg-gradient-to-r from-blue-50 to-blue-100">
+        <h1 className="text-4xl font-bold mb-8 text-center text-blue-900 font-serif">
+          View Schemas
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {schemas.map((schema) => (
             <SchemaCard key={schema._id} data={[schema]} />
           ))}

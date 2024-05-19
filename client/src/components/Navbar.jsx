@@ -14,7 +14,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-const pages = ["New Schema", "View Schema", "Delete Schema"];
+const pages = ["Home","New Schema", "View Schema", "Delete Schema"];
 const settings = ["Profile", "Add Review", "Logout"];
 
 const defaultTheme = createTheme({
@@ -51,6 +51,8 @@ function ResponsiveAppBar() {
       navigate("/View-Schema");
     } else if (page == "Delete Schema") {
       navigate("/Delete-Schema");
+    } else if (page == "Home") {
+      navigate("/home");
     }
   };
 
@@ -68,8 +70,7 @@ function ResponsiveAppBar() {
                   mr: 1,
                   cursor: "pointer",
                 }}
-              >
-              </Box>
+              ></Box>
               <Typography
                 variant="h6"
                 noWrap
@@ -85,7 +86,7 @@ function ResponsiveAppBar() {
                   textDecoration: "none",
                 }}
               >
-                Vahan CMS Assignment 
+                <p className="px-3"> Vahan CMS </p>
               </Typography>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                 <IconButton
@@ -138,8 +139,7 @@ function ResponsiveAppBar() {
                     "_blank"
                   );
                 }}
-              >
-              </Box>
+              ></Box>
               <Typography
                 variant="h5"
                 noWrap
@@ -173,8 +173,10 @@ function ResponsiveAppBar() {
 
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  </IconButton>
+                  <IconButton
+                    onClick={handleOpenUserMenu}
+                    sx={{ p: 0 }}
+                  ></IconButton>
                 </Tooltip>
                 <Menu
                   sx={{ mt: "45px" }}
@@ -193,10 +195,7 @@ function ResponsiveAppBar() {
                   onClose
                 >
                   {settings.map((setting) => (
-                    <MenuItem
-                      key={setting}
-                    >
-                    </MenuItem>
+                    <MenuItem key={setting}></MenuItem>
                   ))}
                 </Menu>
               </Box>

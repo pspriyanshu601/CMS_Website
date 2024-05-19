@@ -1,5 +1,6 @@
 // src/pages/SchemaContents.js
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -56,8 +57,10 @@ const SchemaContents = () => {
         }
       );
       setData(data.filter((item) => item._id !== itemId));
+      toast.success("Data deleted successfully");
     } catch (error) {
       console.error("Error deleting data:", error);
+      toast.error("Failed to add/update data. Please try again later.");
     }
   };
 
@@ -80,6 +83,7 @@ const SchemaContents = () => {
           )
         );
         setSelectedData(null); // Clear the selected data after updating
+        toast.success("Data added successfully");
       } else {
         // Add new data
         const response = await axios.post(
@@ -95,6 +99,7 @@ const SchemaContents = () => {
       setNewData({});
     } catch (error) {
       console.error("Error adding/updating data:", error);
+      toast.error("Failed to add/update data. Please try again later.");
     }
   };
 
@@ -103,10 +108,54 @@ const SchemaContents = () => {
     setSelectedData(item);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+const [error, setError] = useState(""); // State variable to store error message
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  // Get the data type of the current field from the schema
+  const fieldType = schema.fields.find(
+    (field) => field.columnName === name
+  ).dataType;
+
+  // Perform validation based on the data type
+  let isValid = true;
+
+  switch (fieldType) {
+    case "string":
+      if (typeof value !== "string") {
+        isValid = false;
+        setError("Value must be a string.");
+      } else {
+        setError(""); // Clear the error message if validation passes
+      }
+      break;
+    case "number":
+      if (isNaN(value) || value === "") {
+        isValid = false;
+        setError("Value must be a number.");
+      } else {
+        setError(""); // Clear the error message if validation passes
+      }
+      break;
+    // Add validation for other data types as needed
+    default:
+      setError(""); // Clear the error message for unsupported data types
+      break;
+  }
+
+  // Update the state only if the value is valid
+  if (isValid) {
     setNewData({ ...newData, [name]: value });
-  };
+    // Remove the shake effect class if validation passes
+    e.target.classList.remove("shake");
+  } else {
+    // Add the shake effect class if validation fails
+    e.target.classList.add("shake");
+    // You can display the error message to the user using a toast or another UI component
+  }
+};
+
 
   if (!schema) {
     return <div>Loading...</div>;
@@ -118,48 +167,51 @@ const SchemaContents = () => {
       <br />
       <br />
       <br />
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">
+      <div className="container mx-auto p-6 md:p-12 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-lg">
+        <h1 className="text-4xl font-bold mb-8 text-center text-blue-900 font-serif">
           {schema.tableName} Contents
         </h1>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto bg-white rounded-lg shadow-md">
           <table className="min-w-full bg-white border border-gray-200">
             <thead>
               <tr>
                 {schema.fields.map((field) => (
                   <th
                     key={field.columnName}
-                    className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600"
+                    className="py-3 px-4 border-b border-gray-300 bg-blue-100 text-left text-sm font-semibold text-blue-900"
                   >
                     {field.columnName}
                   </th>
                 ))}
-                <th className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600">
+                <th className="py-3 px-4 border-b border-gray-300 bg-blue-100 text-left text-sm font-semibold text-blue-900">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={item._id}>
+                <tr
+                  key={item._id}
+                  className="hover:bg-blue-50 transition duration-200"
+                >
                   {schema.fields.map((field) => (
                     <td
                       key={field.columnName}
-                      className="py-2 px-4 border-b border-gray-200"
+                      className="py-3 px-4 border-b border-gray-300 text-gray-700"
                     >
                       {item.data[field.columnName]}
                     </td>
                   ))}
-                  <td className="py-2 px-4 border-b border-gray-200">
+                  <td className="py-3 px-4 border-b border-gray-300">
                     <button
                       onClick={() => handleUpdate(item)}
-                      className="text-blue-500 hover:text-blue-700 mr-4"
+                      className="text-blue-600 hover:text-blue-800 font-semibold py-2 px-4 rounded-lg border border-blue-600 bg-blue-200 hover:bg-blue-300 transition duration-200 ease-in-out mx-2"
                     >
                       Update
                     </button>
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-600 hover:text-red-800 font-semibold py-2 px-4 rounded-lg border border-red-600 bg-red-200 hover:bg-red-300 transition duration-200 ease-in-out"
                     >
                       Delete
                     </button>
@@ -170,25 +222,28 @@ const SchemaContents = () => {
           </table>
         </div>
         <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Add / Update Data</h2>
+          <h2 className="text-2xl font-bold mb-4 text-blue-900">
+            Add / Update Data
+          </h2>
           <div className="space-y-4">
             {schema.fields.map((field) => (
-              <div key={field.columnName}>
-                <label className="block text-sm font-medium text-gray-700">
-                  {field.columnName}
+              <div key={field.columnName} className="flex items-center">
+                <label className="text-sm font-medium text-blue-700 w-32">
+                  {field.columnName}:
                 </label>
                 <input
                   type="text"
                   name={field.columnName}
+                  placeholder={`Enter the ${field.columnName}`}
                   value={newData[field.columnName] || ""}
                   onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex-grow"
                 />
               </div>
             ))}
             <button
               onClick={handleAddData}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
             >
               {selectedData ? "Update Data" : "Add Data"}
             </button>

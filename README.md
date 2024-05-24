@@ -1,7 +1,41 @@
-This is a headless CMS portal which is the assignment for VAHAN SDE intern position.
+CMS is a content management system designed to help you manage your website's content with ease. This project provides a user-friendly interface for managing tables, schemas, and content, making it an ideal solution for website owners, content creators, and developers.
 
+## Features
 
-# Problem Statement
+- **Easy Content Management:** Manage website content effortlessly with an intuitive interface.
+- **Customizable Templates:** Choose from a range of professionally designed templates.
+- **Collaboration Tools:** Collaborate with team members, assign tasks, and track progress.
 
-> *Create a very rudimenatary headless CMS with extremely basic CRUD functionality. You can imagine this to be an extremely basic version of strapi.js. As an end user, when I run your project, I should be able to create different entities from the frontend by specifying its attributes and their types. (Eg. Person is an entity with attributes name<string>, email<string>, mobileNumber<number>, dateOfBirth<Date>). When an entity is created from frontend, the app should automatically create a table definition, depending on the attributes in an RDMBS (mysql or postgresql only). After creating an entity, I should be able to Create, Read, Update and Delete data in that entity from the frontend itself. (Eg. I should be able to create an entry in the Person entity using name as Ketan, ketan@test.com as the email, 9876543210 as the mobile number and 1-Jan-1990 as the date of birth. I should be able to add, update existing entry, view created entries and delete an existing entry.)*
+- ### Create a Schema
+1. Click on the "Create Schema" button.
+2. Enter the schema name and add the necessary fields.
+3. Click "Submit" to save the schema.
 
+### View Schemas
+1. Navigate to the "View Schemas" section.
+2. You will see a list of all created schemas.
+
+### Delete a Schema
+1. Navigate to the "Delete Schema" section.
+2. Click the "Delete" button next to the schema you want to remove.
+
+### Manage Content
+1. Click on a schema to view its contents.
+2. Add new content by filling out the form and clicking "Add Data".
+3. Update or delete existing content using the buttons next to each entry.
+
+### Features and Components
+
+- **Home Page:**
+  - Welcoming section with a call-to-action button.
+  - Key Features section highlighting the main features of the CMS.
+  - Benefits section explaining the advantages of using the CMS.
+  - Testimonials section showcasing user feedback.
+
+- **Schema Management:**
+  - View, create, and delete schemas.
+  - Add fields to schemas with specific data types.
+
+- **Content Management:**
+  - Add, update, and delete content for each schema.
+  - Display content in a tabular format with actions for updating and deleting.
